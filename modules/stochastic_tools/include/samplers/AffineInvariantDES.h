@@ -49,11 +49,19 @@ protected:
   const std::vector<std::vector<Real>> & _previous_state;
 
   /// Reporter value with the previous state of all the walkers for variance
-  const std::vector<Real> & _previous_state_var;
+  const std::vector<Real> * _previous_state_var_single = nullptr;
+
+  // For multi-variance mode
+  std::vector<const std::vector<Real> *> _previous_state_var_multi;
 
   /// Tuning options for the internal params
   const MooseEnum & _tuning_option;
 
   /// Scales for the parameters
   std::vector<Real> _scales;
+
+private:
+  // Pre-allocated proposal workspace to eliminate repeated allocations
+  mutable std::vector<std::vector<Real>> _proposal_workspace;
+  mutable std::vector<std::vector<Real>> _variance_workspace;
 };

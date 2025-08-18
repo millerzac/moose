@@ -77,8 +77,14 @@ protected:
   /// Model variance term
   std::vector<Real> & _variance;
 
+  // Multi-variance mode support
+  bool _multi_noise_mode;
+  std::vector<std::string> _variance_names;
+  std::vector<std::vector<Real> *> _variance_vec_reporters;
+  std::vector<std::vector<Real> *> _noise_vec_reporters;
+
   /// Model noise term to pass to Likelihoods object
-  Real & _noise;
+  Real * _noise;
 
   /// Storage for the likelihood objects to be utilized
   std::vector<const LikelihoodFunctionBase *> _likelihoods;
@@ -115,9 +121,11 @@ protected:
 
   /// Storage for previous variances
   std::vector<Real> _var_prev;
+  std::vector<std::vector<Real>> _var_prev_vec;
 
   /// Storage for previous outputs
   std::vector<Real> _outputs_prev;
+  std::vector<std::vector<Real>> _variance_vec;
 
 private:
   /// Communicator that was split based on samples that have rows
@@ -125,4 +133,9 @@ private:
 
   /// Ensure that the MCMC algorithm proceeds in a sequential fashion
   int _check_step;
+  // Pre-allocated workspace for evidence computation - eliminates 800+ allocations per step
+  mutable std::vector<Real> _evidence_workspace_current;
+  mutable std::vector<Real> _evidence_workspace_previous;
+  mutable std::vector<Real> _evidence_workspace_noise_current;
+  mutable std::vector<Real> _evidence_workspace_noise_previous;
 };

@@ -26,4 +26,30 @@ public:
    * @param x The input vector x
    */
   virtual Real function(const std::vector<Real> & x) const = 0;
+
+  /**
+   * Return the probability density with vector-valued noise
+   * @param x The input vector x
+   * @param noise_vec The noise vector (one per variable)
+   */
+  virtual Real function(const std::vector<Real> & x, const std::vector<Real> & noise_vec) const
+  {
+    (void)x;
+    (void)noise_vec;
+    mooseError("Vector-valued noise function not implemented in ", name());
+  }
+
+  /**
+   * Return the probability density with vector-valued noise and config ID
+   * @param x The input vector x
+   * @param noise_vec The noise vector (one per variable)
+   * @param config_id The configuration ID for experimental data
+   */
+  virtual Real
+  function(const std::vector<Real> & x, const std::vector<Real> & noise_vec, int config_id) const
+  {
+    // Default: use first experimental configuration
+    (void)config_id; // Suppress unused parameter warning
+    return function(x, noise_vec);
+  }
 };

@@ -49,6 +49,23 @@ public:
   const std::vector<Real> & getVarSamples() const;
 
   /**
+   * Return the new proposed multi-variance samples [walker][variable]
+   */
+  const std::vector<std::vector<Real>> & getVarSamplesVec() const { return _new_var_samples_vec; }
+
+  /**
+   * Return whether we are in multi-variance mode
+   */
+  bool isMultiVarianceMode() const { return _multi_variance_mode; }
+
+  const std::vector<std::string> & getVarianceNames() const { return _variance_names; }
+
+  /**
+   * Return the multi-variance prior distributions (if used)
+   */
+  const std::vector<const Distribution *> & getVarPriors() const { return _var_priors; }
+
+  /**
    * Return the priors to facilitate decision making in reporters
    */
   const std::vector<const Distribution *> getPriors() const;
@@ -102,6 +119,19 @@ protected:
                        unsigned int & req_index1,
                        unsigned int & req_index2);
 
+  /**
+   * Validate that bounds are properly specified (lower < upper)
+   */
+  void validateBounds() const;
+
+  /**
+   * Check if values are within bounds
+   * @param values Vector of values to check
+   * @param start_idx Starting index in bounds array for these values
+   * @return true if all values are within bounds (or no bounds specified)
+   */
+  bool checkBounds(const std::vector<Real> & values, unsigned int start_idx = 0) const;
+
   /// Number of parallel proposals to be made and subApps to be executed
   const unsigned int _num_parallel_proposals;
 
@@ -110,6 +140,16 @@ protected:
 
   /// Storage for prior distribution object of the variance to be utilized
   const Distribution * _var_prior;
+
+  /// Storage for prior distribution object of the variances to be utilized
+  std::vector<const Distribution *> _var_priors;
+
+  std::vector<std::vector<Real>> _new_var_samples_vec;
+
+  std::vector<std::string> _variance_names;
+
+  /// flag to track which singular or multiple variances
+  bool _multi_variance_mode;
 
   /// Lower bounds for making the next proposal
   const std::vector<Real> * _lower_bound;
